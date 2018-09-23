@@ -1,91 +1,156 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Vast-Player Example</title>
-        <script src="./.build/vast-player.js"></script>
-        <style>
-            #container {
-                width: 640px; height: 385px;
-                border: 1px black solid;
-                position: relative;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="container"></div>
-            <button id="startAd" onclick="player.startAd();" disabled>startAd()</button>
-            <button id="stopAd" onclick="player.stopAd();" disabled>stopAd()</button>
-            <button id="pauseAd" onclick="player.pauseAd();" disabled>pauseAd()</button>
-            <button id="resumeAd" onclick="player.resumeAd();" disabled>resumeAd()</button>
-            <button id="resizeAd" onclick="window.container.style.width = '1000px'; window.container.style.height = '602px';" disabled>resizeAd()</button>
-        <script>
-            (function(VASTPlayer) {
-                'use strict';
 
-                VASTPlayer.vpaidSWFLocation = './.build/vast-player--vpaid.swf';
+<head>
+    <title>Vast-Player Example</title>
+    <script src="./.build/vast-player.js"></script>
+    <style>
+        #container {
+            width: 640px;
+            height: 385px;
+            border: 1px black solid;
+            position: relative;
+        }
+    </style>
+</head>
 
-                var player = new VASTPlayer(document.getElementById('container'));
-                var buttons = {
-                    startAd: document.getElementById('startAd'),
-                    stopAd: document.getElementById('stopAd'),
-                    pauseAd: document.getElementById('pauseAd'),
-                    resumeAd: document.getElementById('resumeAd'),
-                    resizeAd: document.getElementById('resizeAd')
-                };
+<body>
+    <video id="content" width="300" height="200" src="https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4"
+        controls playsinline></video>
+    <br />
+    <br>
+    <button id="play">Play</button>
+    <div id="container"></div>
+    <button id="startAd" onclick="player.startAd();" disabled>startAd()</button>
+    <button id="stopAd" onclick="player.stopAd();" disabled>stopAd()</button>
+    <button id="pauseAd" onclick="player.pauseAd();" disabled>pauseAd()</button>
+    <button id="resumeAd" onclick="player.resumeAd();" disabled>resumeAd()</button>
+    <button id="resizeAd" onclick="window.container.style.width = '1000px'; window.container.style.height = '602px';"
+        disabled>resizeAd()</button>
+    <script>
+        (function (VASTPlayer) {
+            'use strict';
 
-                window.container = document.getElementById('container');
+            VASTPlayer.vpaidSWFLocation = './.build/vast-player--vpaid.swf';
 
-                player.once('AdStarted', function() {
-                    buttons.stopAd.disabled = false;
-                    buttons.pauseAd.disabled = false;
-                    buttons.resumeAd.disabled = false;
+            var player = new VASTPlayer(document.getElementById('container'));
+            var buttons = {
+                startAd: document.getElementById('startAd'),
+                stopAd: document.getElementById('stopAd'),
+                pauseAd: document.getElementById('pauseAd'),
+                resumeAd: document.getElementById('resumeAd'),
+                resizeAd: document.getElementById('resizeAd')
+            };
+
+            window.container = document.getElementById('container');
+
+            player.once('AdStarted', function () {
+                buttons.stopAd.disabled = false;
+                buttons.pauseAd.disabled = false;
+                buttons.resumeAd.disabled = false;
+            });
+
+            [
+                'AdLoaded',
+                'AdStarted',
+                'AdStopped',
+                'AdSkipped',
+                'AdSkippableStateChange',
+                'AdSizeChange',
+                'AdLinearChange',
+                'AdDurationChange',
+                'AdExpandedChange',
+                'AdRemainingTimeChange',
+                'AdVolumeChange',
+                'AdImpression',
+                'AdVideoStart',
+                'AdVideoFirstQuartile',
+                'AdVideoMidpoint',
+                'AdVideoThirdQuartile',
+                'AdVideoComplete',
+                'AdClickThru',
+                'AdInteraction',
+                'AdUserAcceptInvitation',
+                'AdUserMinimize',
+                'AdUserClose',
+                'AdPaused',
+                'AdPlaying',
+                'AdLog',
+                'AdError'
+            ].forEach(function (type) {
+                player.on(type, function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    console.log.apply(console, ['EVENT: ' + type].concat(args));
                 });
+            });
+            window.player = player;
+            // player.load(
+            //     'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator='
+            // ).then(function () {
+            //     window.player = player;
 
-                [
-                    'AdLoaded',
-                    'AdStarted',
-                    'AdStopped',
-                    'AdSkipped',
-                    'AdSkippableStateChange',
-                    'AdSizeChange',
-                    'AdLinearChange',
-                    'AdDurationChange',
-                    'AdExpandedChange',
-                    'AdRemainingTimeChange',
-                    'AdVolumeChange',
-                    'AdImpression',
-                    'AdVideoStart',
-                    'AdVideoFirstQuartile',
-                    'AdVideoMidpoint',
-                    'AdVideoThirdQuartile',
-                    'AdVideoComplete',
-                    'AdClickThru',
-                    'AdInteraction',
-                    'AdUserAcceptInvitation',
-                    'AdUserMinimize',
-                    'AdUserClose',
-                    'AdPaused',
-                    'AdPlaying',
-                    'AdLog',
-                    'AdError'
-                ].forEach(function(type) {
-                    player.on(type, function() {
-                        var args = Array.prototype.slice.call(arguments);
-                        console.log.apply(console, ['EVENT: ' + type].concat(args));
-                    });
-                });
+            //     buttons.startAd.disabled = false;
+            //     buttons.resizeAd.disabled = false;
+            // }).catch(function (reason) {
+            //     console.error(reason);
+            // });
 
+            const contentVideo = document.getElementById('content');
+            const playBtn = document.getElementById('play');
+
+            window.addEventListener('error', (err) => {
+                console.log(err.message);
+            })
+
+            const oldLogger = console.log.bind(console);
+            console.log = function () {
+                oldLogger.apply(console, arguments);
+                document.body.appendChild(document.createElement('br'));
+                document.body.appendChild(
+                    document.createTextNode(
+                        Array.prototype.map.call(arguments, arg => arg.toString()).join()
+                    )
+                )
+            };
+
+            playBtn.addEventListener('click', () => {
+                contentVideo.play();
+                player.init();
+
+
+                setTimeout(() => {
                 player.load(
-                    'https://platform-staging.reelcontent.com/api/public/vast/2.0/tag?campaign=cam-e951792a909f17'
-                ).then(function() {
-                    window.player = player;
+                    'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator='
+                ).then(function () {
+                    console.log('loaded');
 
                     buttons.startAd.disabled = false;
                     buttons.resizeAd.disabled = false;
-                }).catch(function(reason) {
-                    console.error(reason);
+
+                    try {
+                        return player.startAd();
+                    } catch (err) {
+                        console.log(111, err.message);
+
+                    }
+
+                })
+                .then(() => {
+                    console.log('started');
+
+                })
+                .catch(function (reason) {
+                    console.log(reason);
                 });
-            }(window.VASTPlayer));
-        </script>
-    </body>
+
+                }, 5000)
+            });
+        }(window.VASTPlayer));
+    </script>
+
+    <script>
+
+    </script>
+</body>
+
 </html>
